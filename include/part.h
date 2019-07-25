@@ -262,22 +262,15 @@ static inline int blk_get_device_part_str(const char *ifname,
 #endif
 
 /*
- * We don't support printing partition information in SPL and only support
- * getting partition information in a few cases.
+ * We don't support printing partition information in SPL
  */
 #ifdef CONFIG_SPL_BUILD
 # define part_print_ptr(x)	NULL
-# if defined(CONFIG_SPL_FS_EXT4) || defined(CONFIG_SPL_FS_FAT) || \
-	defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION)
-#  define part_get_info_ptr(x)	x
-# else
-#  define part_get_info_ptr(x)	NULL
-# endif
 #else
 #define part_print_ptr(x)	x
-#define part_get_info_ptr(x)	x
 #endif
 
+#define part_get_info_ptr(x)	x
 
 struct part_driver {
 	const char *name;
