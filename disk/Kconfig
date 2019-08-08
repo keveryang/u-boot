@@ -4,9 +4,7 @@ menu "Partition Types"
 config PARTITIONS
 	bool "Enable Partition Labels (disklabels) support"
 	default y
-	select SPL_SPRINTF if SPL
 	select TPL_SPRINTF if TPL
-	select SPL_STRTO if SPL
 	select TPL_STRTO if TPL
 	help
 	  Partition Labels (disklabels) Supported:
@@ -23,6 +21,12 @@ config PARTITIONS
 	  you must configure support for at least one non-MTD partition type
 	  as well.
 
+config SPL_PARTITIONS
+	select SPL_SPRINTF
+	select SPL_STRTO
+	bool "Enable Partition Labels (disklabels) support for SPL"
+	depends on SPL
+
 config MAC_PARTITION
 	bool "Enable Apple's MacOS partition table"
 	depends on PARTITIONS
@@ -32,7 +36,7 @@ config MAC_PARTITION
 
 config SPL_MAC_PARTITION
 	bool "Enable Apple's MacOS partition table for SPL"
-	depends on SPL && PARTITIONS
+	depends on SPL_PARTITIONS
 	default y if MAC_PARTITION
 
 config DOS_PARTITION
@@ -45,7 +49,7 @@ config DOS_PARTITION
 
 config SPL_DOS_PARTITION
 	bool "Enable MS Dos partition table for SPL"
-	depends on SPL && PARTITIONS
+	depends on SPL_PARTITIONS
 	default y if DOS_PARTITION
 
 config ISO_PARTITION
@@ -56,7 +60,7 @@ config ISO_PARTITION
 
 config SPL_ISO_PARTITION
 	bool "Enable ISO partition table for SPL"
-	depends on SPL && PARTITIONS
+	depends on SPL_PARTITIONS
 
 config AMIGA_PARTITION
 	bool "Enable AMIGA partition table"
@@ -67,7 +71,7 @@ config AMIGA_PARTITION
 
 config SPL_AMIGA_PARTITION
 	bool "Enable AMIGA partition table for SPL"
-	depends on SPL && PARTITIONS
+	depends on SPL_PARTITIONS
 	default y if AMIGA_PARTITION
 
 config EFI_PARTITION
@@ -111,7 +115,7 @@ config EFI_PARTITION_ENTRIES_OFF
 
 config SPL_EFI_PARTITION
 	bool "Enable EFI GPT partition table for SPL"
-	depends on  SPL && PARTITIONS
+	depends on  SPL_PARTITIONS
 	default y if EFI_PARTITION
 
 config PARTITION_UUIDS
@@ -125,7 +129,7 @@ config PARTITION_UUIDS
 
 config SPL_PARTITION_UUIDS
 	bool "Enable support of UUID for partition in SPL"
-	depends on SPL && PARTITIONS
+	depends on SPL_PARTITIONS
 	default y if SPL_EFI_PARTITION
 
 config PARTITION_TYPE_GUID

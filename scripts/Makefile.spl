@@ -86,7 +86,7 @@ else
 libs-$(CONFIG_SPL_LIBCOMMON_SUPPORT) += common/ cmd/ env/
 libs-$(CONFIG_SPL_LIBGENERIC_SUPPORT) += lib/
 ifdef CONFIG_SPL_FRAMEWORK
-libs-$(CONFIG_PARTITIONS) += disk/
+libs-$(CONFIG_SPL_PARTITIONS) += disk/
 endif
 endif
 
