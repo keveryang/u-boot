@@ -11,6 +11,9 @@
 #include <image.h>
 #include <linux/libfdt.h>
 #include <spl.h>
+#if defined(CONFIG_ARCH_ROCKCHIP)
+#include <malloc.h>
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -218,6 +221,11 @@ static int spl_load_fit_image(struct spl_load_info *info, ulong sector,
 			return -ENOENT;
 
 		load_ptr = (load_addr + align_len) & ~align_len;
+#if defined(CONFIG_ARCH_ROCKCHIP)
+		if ((load_ptr < CONFIG_SYS_SDRAM_BASE) ||
+		     (load_ptr >= CONFIG_SYS_SDRAM_BASE + SDRAM_MAX_SIZE))
+			load_ptr = (ulong)memalign(ARCH_DMA_MINALIGN, len);
+#endif
 		length = len;
 
 		overhead = get_aligned_image_overhead(info, offset);
