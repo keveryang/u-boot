@@ -20,3 +20,10 @@ config RNG_STM32MP1
 	default n
 	help
 	  Enable STM32MP1 rng driver.
+
+config RNG_ROCKCHIP
+	bool "Enable random number generator for rockchip crypto rng"
+	depends on ARCH_ROCKCHIP && DM_RNG
+	default n
+	help
+	  Enable rockchip crypto rng driver.
