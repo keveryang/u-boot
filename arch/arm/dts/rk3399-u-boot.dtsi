@@ -43,6 +43,11 @@
 	u-boot,dm-pre-reloc;
 };
 
+&rng {
+	u-boot,dm-pre-reloc;
+	status = "okay";
+};
+
 &sdhci {
 	u-boot,dm-pre-reloc;
 };
