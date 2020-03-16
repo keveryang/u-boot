@@ -347,6 +347,12 @@
 		status = "disabled";
 	};
 
+	rng: rng@ff0b0000 {
+		compatible = "rockchip,cryptov2-rng";
+		reg = <0x0 0xff0b0000 0x0 0x4000>;
+		status = "disabled";
+	};
+
 	gic: interrupt-controller@ff131000 {
 		compatible = "arm,gic-400";
 		#interrupt-cells = <3>;
