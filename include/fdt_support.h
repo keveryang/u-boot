@@ -329,6 +329,7 @@ int fdt_get_cells_len(const void *blob, char *nr_cells_name);
 #ifdef USE_HOSTCC
 int fdtdec_get_int(const void *blob, int node, const char *prop_name,
 		int default_val);
+int fdtdec_get_child_count(const void *blob, int node);
 #endif
 #ifdef CONFIG_FMAN_ENET
 int fdt_update_ethernet_dt(void *blob);
