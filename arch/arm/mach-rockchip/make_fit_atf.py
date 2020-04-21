@@ -14,6 +14,8 @@ import sys
 import getopt
 import logging
 import struct
+import Crypto
+from Crypto.PublicKey import RSA
 
 DT_HEADER = """
 /*
@@ -37,7 +39,9 @@ DT_UBOOT = """
 			arch = "arm64";
 			compression = "none";
 			load = <0x%08x>;
-		};
+"""
+
+DT_UBOOT_NODE_END = """		};
 
 """
 
@@ -46,6 +50,46 @@ DT_IMAGES_NODE_END = """	};
 """
 
 DT_END = "};"
+
+def append_signature(file):
+    if not os.path.exists("u-boot.cfg"):
+        return
+
+    config = {}
+    with open("u-boot.cfg") as fd:
+        for line in fd:
+            line = line.strip()
+            values = line[8:].split(' ', 1)
+            if len(values) > 1:
+                key, value = values
+                value = value.strip('"')
+            else:
+                key = values[0]
+                value = '1'
+            if not key.startswith('CONFIG_'):
+                continue
+            config[key] = value
+
+    try:
+        keyhint = config["CONFIG_SPL_FIT_GENERATOR_KEY_HINT"]
+    except KeyError:
+        return
+
+    try:
+        keyfile = os.path.join(config["CONFIG_SPL_FIT_SIGNATURE_KEY_DIR"], keyhint)
+    except KeyError:
+        keyfile = keyhint
+
+    if not os.path.exists('%s.key' % keyfile):
+        return
+
+    f = open('%s.key' % keyfile,'r')
+    key = RSA.importKey(f.read())
+
+    file.write('\t\t\tsignature {\n')
+    file.write('\t\t\t\talgo = "sha256,rsa%s";\n' % key.n.bit_length())
+    file.write('\t\t\t\tkey-name-hint = "%s";\n' % keyhint)
+    file.write('\t\t\t};\n')
 
 def append_bl31_node(file, atf_index, phy_addr, elf_entry):
     # Append BL31 DT node to input FIT dts file.
@@ -60,6 +104,7 @@ def append_bl31_node(file, atf_index, phy_addr, elf_entry):
     file.write('\t\t\tload = <0x%08x>;\n' % phy_addr)
     if atf_index == 1:
         file.write('\t\t\tentry = <0x%08x>;\n' % elf_entry)
+    append_signature(file);
     file.write('\t\t};\n')
     file.write('\n')
 
@@ -75,6 +120,7 @@ def append_tee_node(file, atf_index, phy_addr, elf_entry):
     file.write('\t\t\tcompression = "none";\n')
     file.write('\t\t\tload = <0x%08x>;\n' % phy_addr)
     file.write('\t\t\tentry = <0x%08x>;\n' % elf_entry)
+    append_signature(file);
     file.write('\t\t};\n')
     file.write('\n')
 
@@ -88,6 +134,7 @@ def append_fdt_node(file, dtbs):
         file.write('\t\t\tdata = /incbin/("%s");\n' % dtb)
         file.write('\t\t\ttype = "flat_dt";\n')
         file.write('\t\t\tcompression = "none";\n')
+        append_signature(file);
         file.write('\t\t};\n')
         file.write('\n')
         cnt = cnt + 1
@@ -129,6 +176,8 @@ def generate_atf_fit_dts_uboot(fit_file, uboot_file_name):
         raise ValueError("Invalid u-boot ELF image '%s'" % uboot_file_name)
     index, entry, p_paddr, data = segments[0]
     fit_file.write(DT_UBOOT % p_paddr)
+    append_signature(fit_file)
+    fit_file.write(DT_UBOOT_NODE_END)
 
 def generate_atf_fit_dts_bl31(fit_file, bl31_file_name, tee_file_name, dtbs_file_name):
     segments = unpack_elf(bl31_file_name)
