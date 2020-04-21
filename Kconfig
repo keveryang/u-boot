@@ -534,6 +534,14 @@ config SPL_FIT_GENERATOR
 	  passed a list of supported device tree file stub names to
 	  include in the generated image.
 
+config SPL_FIT_GENERATOR_KEY_HINT
+	string "key hint for signing U-Boot FIT image"
+	depends on SPL_FIT_SIGNATURE
+	default "dev"
+	help
+	  The key hint to store in both the generated .its file as well as
+	  u-boot-key.dtb generated separately and embedded into the SPL.
+
 endif # SPL
 
 endif # FIT

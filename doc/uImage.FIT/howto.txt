@@ -66,6 +66,19 @@ can point to a script which generates this image source file during
 the build process. It gets passed a list of device tree files (taken from the
 CONFIG_OF_LIST symbol).
 
+Signing u-boot.itb with SPL_FIT_GENERATOR
+-----------------------------------------
+
+u-boot.itb can be signed to verify the integrity of its components.
+When CONFIG_SPL_FIT_SIGNATURE is enabled the CONFIG_SPL_FIT_SIGNATURE_KEY_DIR
+option can be used to specifiy the key directory - either a relative or
+absolute path.
+
+See signature.txt for general signature handling, but when
+CONFIG_SPL_FIT_GENERATOR is used the option CONFIG_SPL_FIT_GENERATOR_KEY_HINT
+can be used to specify the key-hint that should be included into the
+created u-boot.its by the generator.
+
 Example 1 -- old-style (non-FDT) kernel booting
 -----------------------------------------------
 
