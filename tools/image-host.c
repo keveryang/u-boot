@@ -240,7 +240,7 @@ static int fit_image_process_sig(const char *keydir, void *keydest,
 	ret = fit_image_write_sig(fit, noffset, value, value_len, comment,
 			NULL, 0, cmdname);
 	if (ret) {
-		if (ret == -FDT_ERR_NOSPACE)
+		if (ret == -FDT_ERR_NOSPACE || ret == -ENOSPC)
 			return -ENOSPC;
 		printf("Can't write signature for '%s' signature node in '%s' conf node: %s\n",
 		       node_name, image_name, fdt_strerror(ret));
