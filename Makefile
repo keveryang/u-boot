@@ -1396,6 +1396,14 @@ MKIMAGEFLAGS_u-boot.itb =
 else
 MKIMAGEFLAGS_u-boot.itb = -E
 endif
+ifdef CONFIG_SPL_FIT_SIGNATURE
+ifdef CONFIG_SPL_OF_CONTROL
+MKIMAGEFLAGS_u-boot.itb += -K dts/dt-spl.dtb -r
+ifneq ($(CONFIG_SPL_FIT_SIGNATURE_KEY_DIR),"")
+MKIMAGEFLAGS_u-boot.itb += -k $(CONFIG_SPL_FIT_SIGNATURE_KEY_DIR)
+endif
+endif
+endif
 
 u-boot.itb: u-boot-nodtb.bin \
 		$(if $(CONFIG_OF_SEPARATE)$(CONFIG_OF_EMBED)$(CONFIG_OF_HOSTFILE),dts/dt.dtb) \
@@ -1915,7 +1923,8 @@ spl/u-boot-spl.bin: spl/u-boot-spl
 
 spl/u-boot-spl: tools prepare \
 		$(if $(CONFIG_OF_SEPARATE)$(CONFIG_OF_EMBED)$(CONFIG_SPL_OF_PLATDATA),dts/dt.dtb) \
-		$(if $(CONFIG_OF_SEPARATE)$(CONFIG_OF_EMBED)$(CONFIG_TPL_OF_PLATDATA),dts/dt.dtb)
+		$(if $(CONFIG_OF_SEPARATE)$(CONFIG_OF_EMBED)$(CONFIG_TPL_OF_PLATDATA),dts/dt.dtb) \
+		$(if $(CONFIG_SPL_FIT_SIGNATURE)$(U_BOOT_ITS),u-boot.itb FORCE)
 	$(Q)$(MAKE) obj=spl -f $(srctree)/scripts/Makefile.spl all
 
 spl/sunxi-spl.bin: spl/u-boot-spl

@@ -451,6 +451,14 @@ config SPL_FIT_SIGNATURE
 	select SPL_RSA_VERIFY
 	select SPL_IMAGE_SIGN_INFO
 
+config SPL_FIT_SIGNATURE_KEY_DIR
+	string "key directory for signing U-Boot FIT image"
+	depends on SPL_FIT_SIGNATURE
+	default "keys"
+	help
+	  The directory to give to mkimage to retrieve keys from when
+	  generating a signed U-Boot FIT image.
+
 config SPL_LOAD_FIT
 	bool "Enable SPL loading U-Boot as a FIT (basic fitImage features)"
 	select SPL_FIT
